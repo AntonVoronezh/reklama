@@ -39,19 +39,21 @@ for i, channel_name in enumerate(channel_names):
 
     div = soup.find("div",class_="col-12 col-sm-7 col-md-8 col-lg-6")
 
-    links = div.find_all('a')
+    if div:
 
-    for link in links:
-        href = link.get("href")
+        links = div.find_all('a')
 
-        if 'https://t.me/' in href:
-            href_replaced = link.get("href").replace('https://t.me/', '')
-            href_replaced_with = f'@{href_replaced}'
+        for link in links:
+            href = link.get("href")
 
-            if channel_name not in href_replaced:
-                if href_replaced not in channel_name:
-                    print(href_replaced_with)
-                    add_more_line_in_txt_file(line=href_replaced_with, folder_path=result_out_path, file_name='channel_names_3')
+            if 'https://t.me/' in href:
+                href_replaced = link.get("href").replace('https://t.me/', '')
+                href_replaced_with = f'@{href_replaced}'
+
+                if channel_name not in href_replaced:
+                    if href_replaced not in channel_name:
+                        print(href_replaced_with)
+                        add_more_line_in_txt_file(line=href_replaced_with, folder_path=result_out_path, file_name='channel_names_3')
 
 
 

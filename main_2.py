@@ -31,7 +31,7 @@ for i, channel_name in enumerate(channel_names):
         print(Fore.YELLOW + f'Данные {channel_name} уже есть' + Fore.RESET)
         continue
 
-    tgstat_ads_url = f'https://tgstat.ru/channel/{channel_name}/stat/ads-efficiency'
+    tgstat_ads_url = f'https://tgstat.ru/quotes/{channel_name}/list/m-2401'
     driver.get(tgstat_ads_url)
 
     while True:
@@ -51,22 +51,23 @@ for i, channel_name in enumerate(channel_names):
     html = driver.page_source
     soup = BeautifulSoup(html, 'lxml')
 
-    form = soup.find("form", id="eff-list-form")
-    ul = form.find("ul")
-    li_ar = ul.find_all("li")
+    form = soup.find("form", id="quotes-list-form")
 
-    for li in li_ar:
-        div_row = li.find("div", class_="row")
+    if form:
+        li_ar = form.find_all("li")
 
-        if div_row is not None:
-            div_children = div_row.findChildren("div", recursive=False)
+        if li_ar:
 
-            first_div = div_children[0]
-            link = first_div.find("a")
+            for li in li_ar:
+                a_arr = li.find_all("a")
 
-            href = link.get("href").replace('https://tgstat.ru/channel/','').replace('https://tgstat.com/ru/channel/','')
-            add_more_line_in_txt_file(line=href, folder_path=result_out_path, file_name='channel_names_2')
-            print(href)
+                if a_arr:
+                    a_first = a_arr[0]
+                    a_first_href = a_first.get("href")
+                    a_first_href_split = a_first_href.split('/')
+                    link = a_first_href_split[-2]
+                    print(link)
+                    add_more_line_in_txt_file(line=link, folder_path=result_out_path, file_name='channel_names_2')
 
     add_more_line_in_txt_file(line=channel_name, folder_path=result_tmp_path, file_name='done_2')
     print(Fore.RED + f'{i}, {channel_name}' + Fore.RESET, flush=True)
