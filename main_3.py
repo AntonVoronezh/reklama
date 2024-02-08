@@ -26,7 +26,9 @@ done_channel_names = get_arr_from_txt_file(file_path=result_tmp_path, file_name=
 print(Fore.RED + f'START' + Fore.RESET)
 
 
-for i, channel_name in enumerate(channel_names):
+for i, elem in enumerate(channel_names):
+    channel_name = elem.split('***')[0]
+
     if channel_name in done_channel_names:
         print(Fore.YELLOW + f'Данные {channel_name} уже есть' + Fore.RESET)
         continue
@@ -37,6 +39,7 @@ for i, channel_name in enumerate(channel_names):
     html = driver.page_source
     soup = BeautifulSoup(html, 'lxml')
 
+    channel_name_title = soup.find("h1").text.strip()
     div = soup.find("div",class_="col-12 col-sm-7 col-md-8 col-lg-6")
 
     if div:
@@ -47,13 +50,15 @@ for i, channel_name in enumerate(channel_names):
             href = link.get("href")
 
             if 'https://t.me/' in href:
-                href_replaced = link.get("href").replace('https://t.me/', '')
-                href_replaced_with = f'@{href_replaced}'
+                href_replaced = link.get("href").replace('https://t.me/', '@')
 
                 if channel_name not in href_replaced:
                     if href_replaced not in channel_name:
-                        print(href_replaced_with)
-                        add_more_line_in_txt_file(line=href_replaced_with, folder_path=result_out_path, file_name='channel_names_3')
+                        print(href_replaced)
+                        elem_replaced = elem.replace('%title%', channel_name_title)
+
+                        line = f'{elem_replaced}***{href_replaced}'
+                        add_more_line_in_txt_file(line=line, folder_path=result_out_path, file_name='channel_names_3')
 
 
 

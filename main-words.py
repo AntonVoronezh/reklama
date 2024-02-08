@@ -9,6 +9,7 @@ from selenium.webdriver.common.by import By
 from get_path import make_current_dir, result_path, result_out_path
 from helpers.shared.add_more_line_in_txt_file import add_more_line_in_txt_file
 from helpers.shared.get_arr_from_txt_file import get_arr_from_txt_file
+from helpers.shared.make_uniq_arr import make_uniq_arr_1
 from helpers.shared.time_lambda import time_lambda
 
 service = Service(executable_path="C:\webdrivers\geckodriver.exe",
@@ -25,6 +26,7 @@ print(Fore.RED + f'START' + Fore.RESET)
 
 tgstat_search_url = 'https://tgstat.ru/channels/search'
 
+
 for i, word in enumerate(words):
     driver.get(tgstat_search_url)
 
@@ -32,9 +34,13 @@ for i, word in enumerate(words):
     element_input = driver.find_element(By.XPATH, "//input[@id='q']")
     element_input.send_keys(f"{word}")
 
+    # искать в описании
+    element_input_inabout = driver.find_element(By.XPATH, "//input[@id='inabout']")
+    driver.execute_script("arguments[0].click();", element_input_inabout)
+
     # подписчиков от
     element_input = driver.find_element(By.XPATH, "//input[@id='participantscountfrom']")
-    element_input.send_keys(f"5000")
+    element_input.send_keys(f"2000")
     # подписчиков до
     element_input = driver.find_element(By.XPATH, "//input[@id='participantscountto']")
     element_input.send_keys(f"10000000")
@@ -68,9 +74,11 @@ for i, word in enumerate(words):
 
     for link in links:
         href = link.get("href").replace('https://tgstat.ru/channel/','').replace('https://tgstat.ru/chat/','')
-        add_more_line_in_txt_file(line=href, folder_path=result_out_path, file_name='channel_names')
+        add_more_line_in_txt_file(line=href, folder_path=result_out_path, file_name='channel_names_1')
         print(href)
 
     print(Fore.RED + f'{i}, {word}' + Fore.RESET, flush=True)
+
+make_uniq_arr_1()
 
 time_lambda(start_time=start_time)
